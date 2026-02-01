@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:enginegen:schema:artifact_manifest:1.0.0",
+  "title": "ArtifactManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "run_id",
+    "created_at",
+    "status",
+    "host",
+    "inputs",
+    "plugins",
+    "artifacts"
+  ],
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_\\-\\.]+$"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "partial",
+        "cancelled"
+      ]
+    },
+    "host": {
+      "$ref": "#/$defs/host"
+    },
+    "inputs": {
+      "$ref": "#/$defs/inputs"
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/plugin_record"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact_record"
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number"
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "artifact_kind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)+$"
+    },
+    "plugin_kind": {
+      "type": "string",
+      "enum": [
+        "synthesizer",
+        "geometry_backend",
+        "adapter",
+        "analysis",
+        "optimization"
+      ]
+    },
+    "host": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "version": {
+          "$ref": "#/$defs/semver"
+        },
+        "git_sha": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{7,40}$"
+        },
+        "platform": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "python": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "rust": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "container_image": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spec_hash",
+        "graph_hash",
+        "ir_hash",
+        "config_hash",
+        "plugins_lock_hash"
+      ],
+      "properties": {
+        "spec_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "graph_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "ir_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "config_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "plugins_lock_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "plugin_distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "python_package": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "python_version": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "entry_point_group": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "entry_point_name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "rust_crate": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "plugin_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_kind",
+        "name",
+        "plugin_version",
+        "api_version"
+      ],
+      "properties": {
+        "plugin_kind": {
+          "$ref": "#/$defs/plugin_kind"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "plugin_version": {
+          "$ref": "#/$defs/semver"
+        },
+        "api_version": {
+          "$ref": "#/$defs/semver"
+        },
+        "distribution": {
+          "$ref": "#/$defs/plugin_distribution"
+        },
+        "capabilities_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "capabilities": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "config": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "failed",
+            "skipped"
+          ],
+          "default": "success"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "producer_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plugin_kind",
+        "name"
+      ],
+      "properties": {
+        "plugin_kind": {
+          "$ref": "#/$defs/plugin_kind"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "plugin_version": {
+          "$ref": "#/$defs/semver"
+        }
+      }
+    },
+    "artifact_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "content_hash"
+      ],
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/artifact_kind"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "content_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mime_type": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "producer": {
+          "$ref": "#/$defs/producer_ref"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

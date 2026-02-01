@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:enginegen:schema:plugin_capabilities:1.0.0",
+  "title": "PluginCapabilities",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "capabilities_version",
+    "plugin_kind",
+    "io"
+  ],
+  "properties": {
+    "capabilities_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "plugin_kind": {
+      "type": "string",
+      "enum": [
+        "synthesizer",
+        "geometry_backend",
+        "adapter",
+        "analysis",
+        "optimization"
+      ]
+    },
+    "io": {
+      "$ref": "#/$defs/io"
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/tool_requirement"
+      }
+    },
+    "supports": {
+      "$ref": "#/$defs/supports"
+    },
+    "config_schema": {
+      "type": "object",
+      "description": "Plugin-specific configuration schema (validate separately using a meta-schema).",
+      "additionalProperties": true
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "artifact_kind": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)+$"
+    },
+    "metric_name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)*$"
+    },
+    "check_type": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z0-9_]+)+$"
+    },
+    "data_kind": {
+      "type": "string",
+      "enum": [
+        "spec",
+        "graph",
+        "geometry_ir",
+        "artifact_bundle",
+        "manifest",
+        "config",
+        "diagnostics"
+      ]
+    },
+    "io": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputs",
+        "outputs"
+      ],
+      "properties": {
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/io_item"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/io_item"
+          }
+        }
+      }
+    },
+    "io_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "category"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "data",
+            "artifact",
+            "metric"
+          ]
+        },
+        "data_kind": {
+          "$ref": "#/$defs/data_kind"
+        },
+        "artifact_kind": {
+          "$ref": "#/$defs/artifact_kind"
+        },
+        "metric": {
+          "$ref": "#/$defs/metric_name"
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false
+        },
+        "multiple": {
+          "type": "boolean",
+          "default": false
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "data"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "data_kind"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "artifact"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "artifact_kind"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "category": {
+                "const": "metric"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "metric"
+            ]
+          }
+        }
+      ]
+    },
+    "tool_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "command"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "min_version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "version_args": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri"
+        },
+        "container_image": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "supports": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deterministic": {
+          "type": "boolean",
+          "default": true
+        },
+        "cacheable": {
+          "type": "boolean",
+          "default": true
+        },
+        "parallel_safe": {
+          "type": "boolean",
+          "default": false
+        },
+        "restartable": {
+          "type": "boolean",
+          "default": false
+        },
+        "streaming_logs": {
+          "type": "boolean",
+          "default": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+spec: spec.yaml
+graph: graph.json
+engineCase:
+  synthesizer:
+    type: baseline_rule
+  geometry:
+    backend:
+      type: simple_stl
+    export: ["STL"]
+  pipeline:
+    - { type: noop }
+  analysis:
+    - { type: scalar_metrics }

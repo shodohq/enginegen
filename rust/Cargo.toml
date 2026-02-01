@@ -1,0 +1,3 @@
+[workspace]
+members = ["enginegen_core", "enginegen_py"]
+resolver = "2"

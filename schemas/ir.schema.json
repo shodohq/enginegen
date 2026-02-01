@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:enginegen:schema:geometry_ir:1.0.0",
+  "title": "GeometryIR",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ir_version",
+    "ops",
+    "outputs"
+  ],
+  "properties": {
+    "ir_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "dialect": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "units": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      }
+    },
+    "params": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9_\\-]{0,63}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/param"
+      }
+    },
+    "ops": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/op"
+      }
+    },
+    "outputs": {
+      "$ref": "#/$defs/outputs"
+    },
+    "annotations": {
+      "$ref": "#/$defs/annotations"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_\\-]{0,63}$"
+    },
+    "unit_string": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "number_or_string": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "param": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "type",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "float",
+            "int",
+            "bool",
+            "string"
+          ]
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "unit": {
+          "$ref": "#/$defs/unit_string"
+        },
+        "bounds": {
+          "$ref": "#/$defs/bounds"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "uniqueItems": true
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "step": {
+          "type": "number"
+        }
+      }
+    },
+    "op": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "op"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "op": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "args": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "tags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "debug": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/id"
+      },
+      "required": [
+        "main"
+      ],
+      "properties": {
+        "main": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "annotations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/group"
+          }
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/port_annotation"
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "dim",
+        "refs"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "dim": {
+          "type": "string",
+          "enum": [
+            "face",
+            "volume",
+            "edge",
+            "vertex"
+          ]
+        },
+        "refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/group_ref"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "group_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "op"
+      ],
+      "properties": {
+        "op": {
+          "$ref": "#/$defs/id"
+        },
+        "selector": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "port_kind": {
+      "type": "string",
+      "enum": [
+        "fluid",
+        "thermal",
+        "structural",
+        "electrical",
+        "control",
+        "data"
+      ]
+    },
+    "port_direction": {
+      "type": "string",
+      "enum": [
+        "in",
+        "out",
+        "bidir"
+      ]
+    },
+    "port_annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "direction",
+        "group"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "kind": {
+          "$ref": "#/$defs/port_kind"
+        },
+        "direction": {
+          "$ref": "#/$defs/port_direction"
+        },
+        "group": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "schema": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "info"
+          ],
+          "default": "error"
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "applies_to": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "group": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "op": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,433 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:enginegen:schema:engine_spec:1.0.0",
+  "title": "EngineSpec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "name",
+    "requirements",
+    "constraints",
+    "manufacturing"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "uniqueItems": true
+    },
+    "requirements": {
+      "$ref": "#/$defs/requirements"
+    },
+    "constraints": {
+      "$ref": "#/$defs/constraints"
+    },
+    "manufacturing": {
+      "$ref": "#/$defs/manufacturing"
+    },
+    "analysis_budget": {
+      "$ref": "#/$defs/analysis_budget"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "port_kind": {
+      "type": "string",
+      "enum": [
+        "fluid",
+        "thermal",
+        "structural",
+        "electrical",
+        "control",
+        "data"
+      ]
+    },
+    "port_direction": {
+      "type": "string",
+      "enum": [
+        "in",
+        "out",
+        "bidir"
+      ]
+    },
+    "unit_string": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "quantity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "unit"
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "#/$defs/unit_string"
+        }
+      }
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max",
+        "unit"
+      ],
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "#/$defs/unit_string"
+        }
+      }
+    },
+    "quantity_or_range": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/quantity"
+        },
+        {
+          "$ref": "#/$defs/range"
+        }
+      ]
+    },
+    "target_spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "goal",
+        "target"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "enum": [
+            "minimize",
+            "maximize",
+            "match",
+            "meet_or_exceed",
+            "meet_or_below"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/quantity_or_range"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0.0
+        },
+        "tolerance": {
+          "$ref": "#/$defs/quantity"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targets"
+      ],
+      "properties": {
+        "operating_envelope": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "targets": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/target_spec"
+          }
+        },
+        "assumptions": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 20000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "interface_port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "direction"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_\\-\\.]{0,127}$"
+        },
+        "kind": {
+          "$ref": "#/$defs/port_kind"
+        },
+        "direction": {
+          "$ref": "#/$defs/port_direction"
+        },
+        "schema": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "location_hint": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "limit_spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limit"
+      ],
+      "properties": {
+        "limit": {
+          "$ref": "#/$defs/quantity_or_range"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn",
+            "info"
+          ],
+          "default": "error"
+        },
+        "applies_to": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "packaging": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interface_port"
+          },
+          "uniqueItems": false
+        },
+        "limits": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/limit_spec"
+          }
+        },
+        "design_rules": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 20000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "manufacturing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "process"
+      ],
+      "properties": {
+        "process": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "material": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "rules": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "min_feature_size": {
+              "$ref": "#/$defs/quantity"
+            },
+            "min_wall_thickness": {
+              "$ref": "#/$defs/quantity"
+            },
+            "overhang_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "deg",
+                    "rad"
+                  ],
+                  "default": "deg"
+                }
+              }
+            },
+            "support_policy": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "tolerance_class": {
+              "type": "string",
+              "maxLength": 64
+            }
+          }
+        },
+        "process_parameters": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "quality": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 20000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "analysis_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "hf_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lf_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "time_limit_sec": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_parallel_jobs": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

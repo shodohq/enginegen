@@ -1,0 +1,39 @@
+{
+  "graph_version": "1.0.0",
+  "name": "demo-graph",
+  "nodes": [
+    {
+      "id": "chamber",
+      "kind": "chamber",
+      "ports": [
+        {
+          "id": "out",
+          "name": "Chamber outlet",
+          "kind": "fluid",
+          "direction": "out",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "nozzle",
+      "kind": "nozzle",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Nozzle inlet",
+          "kind": "fluid",
+          "direction": "in",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": { "node": "chamber", "port": "out" },
+      "to": { "node": "nozzle", "port": "in" },
+      "kind": "fluid"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["maturin>=1.5"]
+build-backend = "maturin"
+
+[project]
+name = "enginegen"
+version = "0.1.0"
+description = "Rocket engine generation pipeline framework"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "enginegen contributors"}]
+dependencies = [
+  "pydantic>=2.4",
+  "jsonschema>=4.20",
+  "PyYAML>=6.0",
+  "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+enginegen = "enginegen.cli:main"
+
+[project.entry-points."enginegen.synthesizer"]
+baseline_rule = "enginegen.plugins_builtin.synth_baseline:BaselineRuleSynth"
+
+[project.entry-points."enginegen.geometry_backend"]
+simple_stl = "enginegen.plugins_builtin.geometry_simple:SimpleStlBackend"
+
+[project.entry-points."enginegen.analysis"]
+scalar_metrics = "enginegen.plugins_builtin.analysis_scalar:ScalarMetrics"
+
+[project.entry-points."enginegen.adapter"]
+noop = "enginegen.plugins_builtin.adapter_noop:NoopAdapter"
+
+[tool.maturin]
+manifest-path = "rust/enginegen_py/Cargo.toml"
+python-source = "."
+bindings = "pyo3"

@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:enginegen:schema:system_graph:1.0.0",
+  "title": "SystemGraph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "graph_version",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "graph_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 20000
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "port_kind": {
+      "type": "string",
+      "enum": [
+        "fluid",
+        "thermal",
+        "structural",
+        "electrical",
+        "control",
+        "data"
+      ]
+    },
+    "port_direction": {
+      "type": "string",
+      "enum": [
+        "in",
+        "out",
+        "bidir"
+      ]
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_\\-]{0,63}$"
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "ports"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/port"
+          },
+          "minItems": 1
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "direction"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "kind": {
+          "$ref": "#/$defs/port_kind"
+        },
+        "direction": {
+          "$ref": "#/$defs/port_direction"
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "schema": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "port"
+      ],
+      "properties": {
+        "node": {
+          "$ref": "#/$defs/id"
+        },
+        "port": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "to": {
+          "$ref": "#/$defs/endpoint"
+        },
+        "kind": {
+          "$ref": "#/$defs/port_kind"
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extensions": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

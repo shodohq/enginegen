@@ -1,0 +1,13 @@
+[package]
+name = "enginegen_py"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "enginegen_core"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+enginegen_core = { path = "../enginegen_core" }
+pyo3 = { version = "0.20", features = ["extension-module"] }
