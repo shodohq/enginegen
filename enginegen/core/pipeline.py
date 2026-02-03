@@ -228,6 +228,11 @@ def execute_pipeline(
 
         ir_diags = validate_ir_schema(ir, schema_dir / "ir.schema.json")
         ir_diags.extend(validate_ir(ir))
+        dialect = ir.get("dialect")
+        if isinstance(dialect, str) and dialect:
+            dialect_path = schema_dir / "dialects" / f"{dialect}.schema.json"
+            if dialect_path.exists():
+                ir_diags.extend(validate_ir_schema(ir, dialect_path))
         if ir_diags.has_errors():
             _write_diagnostics(run_dir, ir_diags)
             ir_diags.raise_for_errors()
@@ -335,7 +340,7 @@ def execute_pipeline(
         else:
             step_start = time.perf_counter()
             try:
-                artifacts = _call_geometry_compile(geom, ir, ctx, export_formats)
+                artifacts = _call_geometry_compile(geom, ir, ctx, export_formats, geom_cfg)
             except Exception as exc:
                 _log_event(
                     event_logger,
@@ -782,6 +787,8 @@ def execute_pipeline(
                     "seed": ctx.seed,
                     "nondeterminism": ctx.nondeterminism,
                 }
+            if artifacts.notes:
+                diagnostics["artifact_notes"] = artifacts.notes
             if error_info:
                 diagnostics["error"] = error_info
             if cache_key is not None:
@@ -895,14 +902,23 @@ def _normalize_nondeterminism(value: Any) -> Dict[str, Any]:
 
 
 def _call_geometry_compile(
-    geom, ir: Dict[str, Any], ctx: HostContext, export_formats: Optional[List[str]]
+    geom,
+    ir: Dict[str, Any],
+    ctx: HostContext,
+    export_formats: Optional[List[str]],
+    config: Optional[Dict[str, Any]] = None,
 ) -> ArtifactBundle:
     try:
         sig = inspect.signature(geom.compile)
     except (TypeError, ValueError):
         return geom.compile(ir, ctx)
+    kwargs: Dict[str, Any] = {}
     if "export_formats" in sig.parameters:
-        return geom.compile(ir, ctx, export_formats=export_formats)
+        kwargs["export_formats"] = export_formats
+    if "config" in sig.parameters:
+        kwargs["config"] = config
+    if kwargs:
+        return geom.compile(ir, ctx, **kwargs)
     return geom.compile(ir, ctx)
 
 
@@ -1326,7 +1342,7 @@ def _load_feedback_bundle(
 def _is_cacheable(ref: ArtifactRef) -> bool:
     if ref.kind.startswith("log."):
         return False
-    if ref.kind.startswith(("cad.", "mesh.", "validation", "checks.")):
+    if ref.kind.startswith(("cad.", "mesh.", "geometry.", "validation", "checks.")):
         return True
     return False
 

@@ -1,3 +1,3 @@
 [workspace]
-members = ["enginegen_core", "enginegen_py"]
+members = ["enginegen_core", "enginegen_geom_fidget", "enginegen_py"]
 resolver = "2"

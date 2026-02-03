@@ -143,12 +143,12 @@ def validate_ir(ir: Dict[str, Any]) -> Diagnostics:
             )
         )
     else:
-        if "main" not in outputs:
+        if "main" not in outputs and "solid" not in outputs:
             diagnostics.add(
                 Diagnostic(
                     code="E-IR-OUTPUTS",
-                    message="IR outputs.main is required",
-                    location="outputs.main",
+                    message="IR outputs.main or outputs.solid is required",
+                    location="outputs",
                 )
             )
         for name, ref in outputs.items():

@@ -1,0 +1,8 @@
+This distribution includes the Fidget library, which is licensed under the Mozilla Public License 2.0 (MPL-2.0).
+
+If you distribute binaries that include modified MPL-2.0 files, you must make those modified files available under MPL-2.0.
+The full license text is available from Mozilla at:
+https://www.mozilla.org/en-US/MPL/2.0/
+
+Fidget project repository:
+https://github.com/mkeeter/fidget

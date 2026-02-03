@@ -1,0 +1,22 @@
+{
+  "ir_version": "1.0.0",
+  "dialect": "enginegen.implicit.fidget.v1",
+  "units": {"length": "m"},
+  "metadata": {
+    "domain_bbox": [[-0.2, -0.2, -0.2], [0.2, 0.2, 0.2]]
+  },
+  "ops": [
+    {
+      "id": "c",
+      "op": "fidget.prim.circle",
+      "args": {"center": [0.06, 0.0], "radius": 0.04}
+    },
+    {
+      "id": "rev",
+      "op": "fidget.gen.revolve_y",
+      "inputs": ["c"],
+      "args": {"offset": 0.0}
+    }
+  ],
+  "outputs": {"main": "rev"}
+}

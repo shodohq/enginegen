@@ -25,6 +25,7 @@ baseline_rule = "enginegen.plugins_builtin.synth_baseline:BaselineRuleSynth"
 
 [project.entry-points."enginegen.geometry_backend"]
 simple_stl = "enginegen.plugins_builtin.geometry_simple:SimpleStlBackend"
+builtin.geometry.fidget = "enginegen.plugins_builtin.geometry_fidget:FidgetGeometryBackend"
 
 [project.entry-points."enginegen.analysis"]
 scalar_metrics = "enginegen.plugins_builtin.analysis_scalar:ScalarMetrics"

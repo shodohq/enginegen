@@ -1,0 +1,13 @@
+[package]
+name = "enginegen_geom_fidget"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.87"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+fidget = { version = "0.4.1", default-features = false, features = ["jit", "mesh"] }
+fidget-core = { version = "0.4.1" }
+fidget-shapes = { version = "0.4.1" }

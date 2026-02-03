@@ -56,6 +56,9 @@
         "$ref": "#/$defs/check"
       }
     },
+    "domain": {
+      "$ref": "#/$defs/domain"
+    },
     "metadata": {
       "type": "object",
       "additionalProperties": true
@@ -168,6 +171,56 @@
         }
       }
     },
+    "vec3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "aabb_array": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/vec3"
+      }
+    },
+    "aabb_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": {
+          "$ref": "#/$defs/vec3"
+        },
+        "max": {
+          "$ref": "#/$defs/vec3"
+        }
+      }
+    },
+    "domain": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "aabb": {
+          "oneOf": [
+            {"$ref": "#/$defs/aabb_array"},
+            {"$ref": "#/$defs/aabb_object"}
+          ]
+        },
+        "bbox": {
+          "oneOf": [
+            {"$ref": "#/$defs/aabb_array"},
+            {"$ref": "#/$defs/aabb_object"}
+          ]
+        },
+        "padding": {
+          "type": "number"
+        }
+      }
+    },
     "op": {
       "type": "object",
       "additionalProperties": false,
@@ -227,11 +280,19 @@
       "additionalProperties": {
         "$ref": "#/$defs/id"
       },
-      "required": [
-        "main"
+      "anyOf": [
+        {
+          "required": ["main"]
+        },
+        {
+          "required": ["solid"]
+        }
       ],
       "properties": {
         "main": {
+          "$ref": "#/$defs/id"
+        },
+        "solid": {
           "$ref": "#/$defs/id"
         }
       }

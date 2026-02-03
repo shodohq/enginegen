@@ -73,6 +73,7 @@ class PluginRegistry:
         try:
             from enginegen.plugins_builtin.synth_baseline import BaselineRuleSynth
             from enginegen.plugins_builtin.geometry_simple import SimpleStlBackend
+            from enginegen.plugins_builtin.geometry_fidget import FidgetGeometryBackend
             from enginegen.plugins_builtin.analysis_scalar import ScalarMetrics
             from enginegen.plugins_builtin.adapter_noop import NoopAdapter
 
@@ -80,6 +81,8 @@ class PluginRegistry:
                 self.register("synthesizer", "baseline_rule", BaselineRuleSynth)
             if "simple_stl" not in self._registry.get("geometry_backend", {}):
                 self.register("geometry_backend", "simple_stl", SimpleStlBackend)
+            if "builtin.geometry.fidget" not in self._registry.get("geometry_backend", {}):
+                self.register("geometry_backend", "builtin.geometry.fidget", FidgetGeometryBackend)
             if "scalar_metrics" not in self._registry.get("analysis", {}):
                 self.register("analysis", "scalar_metrics", ScalarMetrics)
             if "noop" not in self._registry.get("adapter", {}):

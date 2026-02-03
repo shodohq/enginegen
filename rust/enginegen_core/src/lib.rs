@@ -120,6 +120,7 @@ struct GeometryIr {
     annotations: Option<Value>,
     #[serde(default)]
     checks: Vec<Value>,
+    domain: Option<Value>,
     metadata: Option<Value>,
     extensions: Option<Value>,
 }

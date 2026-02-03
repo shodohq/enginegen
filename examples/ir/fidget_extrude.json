@@ -1,0 +1,22 @@
+{
+  "ir_version": "1.0.0",
+  "dialect": "enginegen.implicit.fidget.v1",
+  "units": {"length": "m"},
+  "metadata": {
+    "domain_bbox": [[-0.15, -0.15, -0.05], [0.15, 0.15, 0.15]]
+  },
+  "ops": [
+    {
+      "id": "r",
+      "op": "fidget.prim.rectangle",
+      "args": {"lower": [-0.08, -0.05], "upper": [0.08, 0.05]}
+    },
+    {
+      "id": "e",
+      "op": "fidget.gen.extrude_z",
+      "inputs": ["r"],
+      "args": {"lower": -0.02, "upper": 0.08}
+    }
+  ],
+  "outputs": {"main": "e"}
+}
