@@ -46,22 +46,30 @@ baseline_rule = "my_pkg.synth:BaselineSynth"
 
 ```yaml
 engineCase:
-  synthesizer: { type: baseline_rule }
+  synthesizer: { type: rocket_nozzle }
   geometry:
-    backend: { type: simple_stl }
+    backend: { type: builtin.geometry.fidget }
     export: ["STL"]
   pipeline:
-    - { type: noop }
+    - type: openfoam_cfd
+      mode: mock
+      case_template: examples/openfoam/case_template
   analysis:
-    - { type: scalar_metrics }
+    - { type: openfoam_metrics }
+  optimization:
+    type: nozzle_tuner
 ```
 
 ## Built-in Plugins
 
 - `baseline_rule` (synthesizer)
+- `rocket_nozzle` (synthesizer, outputs Fidget dialect IR)
 - `simple_stl` (geometry_backend)
 - `builtin.geometry.fidget` (geometry_backend, implicit)
 - `noop` (adapter)
+- `openfoam_cfd` (adapter)
 - `scalar_metrics` (analysis)
+- `openfoam_metrics` (analysis)
+- `nozzle_tuner` (optimization)
 
 `builtin.geometry.fidget` depends on the native `enginegen_core` extension.

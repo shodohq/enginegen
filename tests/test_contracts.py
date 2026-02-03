@@ -30,6 +30,25 @@ def test_ir_schema_and_validation():
     assert not ir_diag.has_errors()
 
 
+def test_rocket_nozzle_synth_ir_valid():
+    root = Path(__file__).resolve().parents[1]
+    spec = load_spec(root / "examples" / "spec.yaml")
+    graph = load_graph(root / "examples" / "graph.json")
+
+    registry = PluginRegistry()
+    registry.discover()
+
+    synth = registry.get("synthesizer", "rocket_nozzle")
+    normalized_spec, _ = normalize_spec(spec)
+    ir = synth.synthesize(normalized_spec, graph, ctx=None)
+
+    ir_diag = validate_ir(ir)
+    assert not ir_diag.has_errors()
+    assert ir.get("dialect") == "enginegen.implicit.fidget.v1"
+    metadata = ir.get("metadata") or {}
+    assert metadata.get("domain_bbox")
+
+
 def test_ir_rejects_unknown_op():
     ir = {
         "ir_version": "1.0.0",
@@ -96,9 +115,13 @@ def test_plugin_api_contract():
     registry.discover()
     expected = [
         ("synthesizer", "baseline_rule"),
+        ("synthesizer", "rocket_nozzle"),
         ("geometry_backend", "simple_stl"),
         ("adapter", "noop"),
+        ("adapter", "openfoam_cfd"),
         ("analysis", "scalar_metrics"),
+        ("analysis", "openfoam_metrics"),
+        ("optimization", "nozzle_tuner"),
     ]
     for kind, name in expected:
         plugin = registry.get(kind, name)

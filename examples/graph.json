@@ -1,6 +1,6 @@
 {
   "graph_version": "1.0.0",
-  "name": "demo-graph",
+  "name": "rocket-nozzle-graph",
   "nodes": [
     {
       "id": "chamber",
@@ -25,6 +25,26 @@
           "kind": "fluid",
           "direction": "in",
           "required": true
+        },
+        {
+          "id": "out",
+          "name": "Nozzle exit",
+          "kind": "fluid",
+          "direction": "out",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "exhaust",
+      "kind": "ambient",
+      "ports": [
+        {
+          "id": "in",
+          "name": "Exhaust sink",
+          "kind": "fluid",
+          "direction": "in",
+          "required": true
         }
       ]
     }
@@ -33,6 +53,11 @@
     {
       "from": { "node": "chamber", "port": "out" },
       "to": { "node": "nozzle", "port": "in" },
+      "kind": "fluid"
+    },
+    {
+      "from": { "node": "nozzle", "port": "out" },
+      "to": { "node": "exhaust", "port": "in" },
       "kind": "fluid"
     }
   ]

@@ -37,10 +37,11 @@
 
 ## Built-in Plugins
 
-- Synthesizer: `baseline_rule`
+- Synthesizer: `baseline_rule`, `rocket_nozzle`
 - Geometry: `simple_stl`, `builtin.geometry.fidget`
-- Adapter: `noop`
-- Analysis: `scalar_metrics`
+- Adapter: `noop`, `openfoam_cfd`
+- Analysis: `scalar_metrics`, `openfoam_metrics`
+- Optimization: `nozzle_tuner`
 
 These are registered via entry points in `pyproject.toml` and as a fallback
 in `enginegen/core/plugin_loader.py`.

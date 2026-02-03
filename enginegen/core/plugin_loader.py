@@ -72,21 +72,33 @@ class PluginRegistry:
     def _register_builtins(self) -> None:
         try:
             from enginegen.plugins_builtin.synth_baseline import BaselineRuleSynth
+            from enginegen.plugins_builtin.synth_rocket_nozzle import RocketNozzleSynth
             from enginegen.plugins_builtin.geometry_simple import SimpleStlBackend
             from enginegen.plugins_builtin.geometry_fidget import FidgetGeometryBackend
             from enginegen.plugins_builtin.analysis_scalar import ScalarMetrics
+            from enginegen.plugins_builtin.analysis_openfoam import OpenFoamMetrics
             from enginegen.plugins_builtin.adapter_noop import NoopAdapter
+            from enginegen.plugins_builtin.adapter_openfoam import OpenFoamAdapter
+            from enginegen.plugins_builtin.optimization_nozzle_tuner import NozzleTuner
 
             if "baseline_rule" not in self._registry.get("synthesizer", {}):
                 self.register("synthesizer", "baseline_rule", BaselineRuleSynth)
+            if "rocket_nozzle" not in self._registry.get("synthesizer", {}):
+                self.register("synthesizer", "rocket_nozzle", RocketNozzleSynth)
             if "simple_stl" not in self._registry.get("geometry_backend", {}):
                 self.register("geometry_backend", "simple_stl", SimpleStlBackend)
             if "builtin.geometry.fidget" not in self._registry.get("geometry_backend", {}):
                 self.register("geometry_backend", "builtin.geometry.fidget", FidgetGeometryBackend)
             if "scalar_metrics" not in self._registry.get("analysis", {}):
                 self.register("analysis", "scalar_metrics", ScalarMetrics)
+            if "openfoam_metrics" not in self._registry.get("analysis", {}):
+                self.register("analysis", "openfoam_metrics", OpenFoamMetrics)
             if "noop" not in self._registry.get("adapter", {}):
                 self.register("adapter", "noop", NoopAdapter)
+            if "openfoam_cfd" not in self._registry.get("adapter", {}):
+                self.register("adapter", "openfoam_cfd", OpenFoamAdapter)
+            if "nozzle_tuner" not in self._registry.get("optimization", {}):
+                self.register("optimization", "nozzle_tuner", NozzleTuner)
         except Exception:
             # Built-ins are optional; entry points may already provide them.
             return

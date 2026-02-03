@@ -26,23 +26,36 @@ python -m enginegen.cli run -c examples/case.yaml
 
 Outputs are written to `runs/<run_id>/` with `spec.normalized.json`, `graph.json`,
 `ir.json`, `config.yaml`, `artifacts/`, `logs/`, and `manifest.json`.
+If `nozzle_tuner` is enabled, a follow-up case file is written to
+`runs/<run_id>/artifacts/case.tuned.yaml`.
+
+Note: the default example uses `builtin.geometry.fidget`, which requires the native
+`enginegen_core` extension. If you don't have it, switch the case to
+`synthesizer: baseline_rule` and `geometry.backend: simple_stl`.
 
 ## Examples
 
-- `examples/spec.yaml` - sample EngineSpec
-- `examples/graph.json` - sample SystemGraph
-- `examples/case.yaml` - case config
+- `examples/spec.yaml` - rocket nozzle EngineSpec sample
+- `examples/graph.json` - rocket nozzle SystemGraph sample
+- `examples/case.yaml` - rocket nozzle case config
 - `examples/ir/` - Geometry IR examples (implicit dialect)
+- `examples/openfoam/` - OpenFOAM case scaffold and notes
 
 ## Built-in Plugins
 
 - `baseline_rule` (synthesizer)
+- `rocket_nozzle` (synthesizer, outputs Fidget dialect IR)
 - `simple_stl` (geometry backend)
 - `builtin.geometry.fidget` (implicit geometry backend)
 - `noop` (adapter)
+- `openfoam_cfd` (adapter)
 - `scalar_metrics` (analysis)
+- `openfoam_metrics` (analysis)
+- `nozzle_tuner` (optimization)
 
 Note: `builtin.geometry.fidget` requires the native `enginegen_core` extension (Rust).
+The default example uses `openfoam_cfd` in `mode: mock`; switch to `mode: run` and
+provide OpenFOAM commands + a case template to execute real CFD.
 
 ## Documentation
 

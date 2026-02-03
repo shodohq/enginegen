@@ -22,6 +22,7 @@ enginegen = "enginegen.cli:main"
 
 [project.entry-points."enginegen.synthesizer"]
 baseline_rule = "enginegen.plugins_builtin.synth_baseline:BaselineRuleSynth"
+rocket_nozzle = "enginegen.plugins_builtin.synth_rocket_nozzle:RocketNozzleSynth"
 
 [project.entry-points."enginegen.geometry_backend"]
 simple_stl = "enginegen.plugins_builtin.geometry_simple:SimpleStlBackend"
@@ -29,9 +30,14 @@ builtin.geometry.fidget = "enginegen.plugins_builtin.geometry_fidget:FidgetGeome
 
 [project.entry-points."enginegen.analysis"]
 scalar_metrics = "enginegen.plugins_builtin.analysis_scalar:ScalarMetrics"
+openfoam_metrics = "enginegen.plugins_builtin.analysis_openfoam:OpenFoamMetrics"
 
 [project.entry-points."enginegen.adapter"]
 noop = "enginegen.plugins_builtin.adapter_noop:NoopAdapter"
+openfoam_cfd = "enginegen.plugins_builtin.adapter_openfoam:OpenFoamAdapter"
+
+[project.entry-points."enginegen.optimization"]
+nozzle_tuner = "enginegen.plugins_builtin.optimization_nozzle_tuner:NozzleTuner"
 
 [tool.maturin]
 manifest-path = "rust/enginegen_py/Cargo.toml"

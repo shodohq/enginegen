@@ -19,16 +19,24 @@ spec: spec.yaml
 graph: graph.json
 engineCase:
   synthesizer:
-    type: baseline_rule
+    type: rocket_nozzle
   geometry:
     backend:
-      type: simple_stl
+      type: builtin.geometry.fidget
     export: ["STL"]
   pipeline:
-    - { type: noop }
+    - type: openfoam_cfd
+      mode: mock
+      case_template: examples/openfoam/case_template
+      stl_name: nozzle.stl
   analysis:
-    - { type: scalar_metrics }
+    - { type: openfoam_metrics }
+  optimization:
+    type: nozzle_tuner
 ```
+
+`openfoam_cfd` defaults to `mode: mock` in the example above. Switch to `mode: run`
+and add `commands:` (e.g. `blockMesh`, `simpleFoam`) when OpenFOAM is installed.
 
 ## Execution Flow
 
@@ -51,6 +59,9 @@ Each run is written to `runs/<run_id>/` with:
 - `artifacts/`
 - `logs/`
 - `manifest.json`
+
+When optimization is enabled (e.g. `nozzle_tuner`), a follow-up case file is written to
+`runs/<run_id>/artifacts/case.tuned.yaml` for the next iteration.
 
 The manifest schema is `schemas/manifest.schema.json`.
 

@@ -1,14 +1,14 @@
 spec_version: "1.0.0"
-name: "demo"
-description: "Demo engine spec for baseline pipeline"
+name: "rocket-nozzle-demo"
+description: "Rocket engine nozzle demo with a bell profile"
 requirements:
   targets:
     thrust:
       goal: "meet_or_exceed"
-      target: { value: 100, unit: kN }
+      target: { value: 120, unit: kN }
     chamber_pressure:
       goal: "meet_or_exceed"
-      target: { value: 3.5, unit: MPa }
+      target: { value: 6.0, unit: MPa }
 constraints: {}
 manufacturing:
   process: "SLM"
@@ -18,14 +18,21 @@ manufacturing:
     min_feature_size: { value: 0.5, unit: mm }
     overhang_limit: { value: 45, unit: deg }
 analysis_budget:
-  hf_runs: 3
-  time_limit_sec: 1200
+  hf_runs: 5
+  time_limit_sec: 1800
 metadata:
   geometry:
     chamber:
-      length: { value: 0.3, unit: m }
+      length: { value: 0.28, unit: m }
       radius: { value: 0.12, unit: m }
     nozzle:
-      throat_radius: { value: 0.05, unit: m }
-      exit_radius: { value: 0.15, unit: m }
-      length: { value: 0.4, unit: m }
+      type: "bell"
+      throat_radius: { value: 0.045, unit: m }
+      exit_radius: { value: 0.18, unit: m }
+      converging_length: { value: 0.10, unit: m }
+      throat_length: { value: 0.025, unit: m }
+      bell_length: { value: 0.42, unit: m }
+      wall_thickness: { value: 0.004, unit: m }
+      bell_samples: 12
+      bell_throat_angle_deg: 30
+      bell_exit_angle_deg: 15
